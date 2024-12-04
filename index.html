@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Datos a Base de Datos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enviar Datos a la Base de Datos</h1>
+        <p><strong>Fecha:</strong> <span id="fecha">Cargando...</span></p>
+        <p><strong>Hora:</strong> <span id="hora">Cargando...</span></p>
+        <p><strong>Método:</strong> <span id="metodo">Cargando...</span></p>
+        <button id="enviar">Enviar a la Base de Datos</button>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                fecha: params.get("fecha") || "No especificada",
+                hora: params.get("hora") || "No especificada",
+                metodo: params.get("metodo") || "No especificado"
+            };
+        }
+
+        // Mostrar los datos en la página
+        const params = getQueryParams();
+        document.getElementById("fecha").textContent = params.fecha;
+        document.getElementById("hora").textContent = params.hora;
+        document.getElementById("metodo").textContent = params.metodo;
+
+        // Enviar datos al servidor PHP
+        document.getElementById("enviar").addEventListener("click", () => {
+            fetch("guardar.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(params),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Datos guardados correctamente.");
+                } else {
+                    alert("Error al guardar los datos.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al conectar con el servidor.");
+            });
+        });
+    </script>
+</body>
+</html>
